@@ -37,3 +37,7 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+#geocoding by google
+bars_geocode.R
+.xlsx
