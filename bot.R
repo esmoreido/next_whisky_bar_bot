@@ -11,8 +11,13 @@ long2UTM <- function(long) {
   (floor((long + 180)/6) %% 60) + 1
 }
 
+# если на новой машине запускается - добавить токен бота в .Renviron
+# file.edit(path.expand(file.path("~", ".Renviron")))
+
+# экземпляр бота
 updater <- Updater(bot_token(bot_name = 'next_wine_bar_bot'))
 
+# приветствие
 init_msg <- function(bot, update) {
 
   # Имя пользователя с которым надо поздароваться
@@ -27,8 +32,10 @@ init_msg <- function(bot, update) {
                   parse_mode = "Markdown")
 }
 
+# обработчик приветствия
 init_handler <- CommandHandler('start', init_msg)
 
+# собственно функция поиска
 bar_search <- function(bot, update){
   # загружаем точки
   load('bars_wgs.RData')
