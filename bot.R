@@ -80,7 +80,7 @@ bar_search <- function(bot, update){
   
   for(i in 1:nrow(bars_near)){
     bot$sendMessage(update$message$chat_id,
-                    text = bars_near[i, 'name'],
+                    text = paste0(bars_near[i, 'name'], ', ', round(bars_near[i, 'dist'], 1), ' км по прямой'),
                     parse_mode = "Markdown")
     bot$sendLocation(
       update$message$chat_id,
