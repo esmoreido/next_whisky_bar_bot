@@ -5,6 +5,7 @@ library(sf)
 library(rgdal)
 library(leaflet)
 library(rgeos)
+library(gdistance)
 
 # функция для определения номера зоны UTM, в которой находится пользователь
 long2UTM <- function(long) {
@@ -49,12 +50,13 @@ bar_search <- function(bot, update){
   userCRS <- paste0("+proj=utm +zone=", long2UTM(lon)," +datum=WGS84 +units=km +no_defs ")
   
   # делаем точку из координат
-  userloc <- readWKT(paste0("POINT (", lon, ' ', lat, ')'), p4s = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
-  userloc <- spTransform(userloc, CRS(userCRS))
+  # userloc <- readWKT(paste0("POINT (", lon, ' ', lat, ')'), p4s = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
+  userloc <- st_as_sf(data.frame(lat = lat, lon = lon), coords = c('lon', 'lat'), crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ")
+  userloc <- st_transform(userloc$geometry, CRS(userCRS))
   
   bars_proj <- spTransform(bars_wgs, CRS(userCRS)) 
   proj4string(bars_proj)
-  bars_proj$dist <- t(gDistance(spTransform(bars_wgs, CRS(userCRS)), userloc, byid = T))
+  bars_proj$dist <- t(gdistance(st_transform(bars_wgs, CRS(userCRS)), userloc, byid = T))
   bars_proj <- as.data.frame(bars_proj)
   
   bars_proj$prox <- cut(bars_proj$dist, breaks = c(0, 0.5, 1, 2, 3, 5, +Inf), 
